@@ -1,7 +1,8 @@
 import discord
+import os
 from dotenv import load_dotenv
 from discord.ext import commands
-
+from model import model
 
 load_dotenv()
 
@@ -12,6 +13,9 @@ client = discord.Client(intents=intents)
 bot = commands.Bot(command_prefix='!', intents=intents)
 llm = model()
 
+
+starter = open("prompt/starter.txt").read()
+
 @client.event
 async def on_ready():
 	print(f"We have logged in as {client.user}")
@@ -21,23 +25,14 @@ async def on_ready():
 async def on_message(message):
 	if message.author == client.user:
 		return
-	
-	if message.content.startwith("ping"):
+	if message.content.startswith("ping"):
 		await message.channel.send("pong")
+		return
+	if message.content.startswith("!start"):
+		await message.channel.send(starter)
+	if message.content.startswith("!t"):
+		output = llm.generate_scenes(message.author.name, message.content)
+		await message.channel.send(output)
+	
 
-
-
-@bot.command()
-async def start(ctx, arg):
-	await ctx.send(f"Hello the command is activited, the arg is {arg}")
-	pass
-
-
-@bot.command()
-async def talk(ctx, arg):
-	if llm == None:
-		await ctx.send("You have not started the game yet")
-	else:
-		output = llm.generate_scenes(ctx.author.name, ctx.message.content)
-		await ctx.send(output)
 client.run(os.getenv("TOKEN"))

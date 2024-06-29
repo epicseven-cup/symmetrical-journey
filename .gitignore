@@ -1,2 +1,4 @@
 .env
-
+model/*
+venv/*
+__pycache__/*
