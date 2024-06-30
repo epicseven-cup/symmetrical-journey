@@ -21,11 +21,9 @@ class DungonMaster:
 	# This will be done to talk to users when in case of inacitvily
 	def explore(self):
 		pass
-
 	# Save the current game state into a file that the model can read into it later, should tell the user a id name that can be used to reference the game
 	def save_state(self):
 		pass
-
 	# loads a state base on given ids
 	def load_state(self):
 		pass
@@ -33,7 +31,7 @@ class DungonMaster:
 
 class Gemini(DungonMaster):
 	def __init__(self):
-		genai.configure(os.getenv("GEMINI_API_KEY"))
+		genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 		self.model = genai.GenerativeModel("gemini-1.5-flash")
 		# Start to save chat history
 		self.chat = self.model.start_chat(history=[])
@@ -41,26 +39,19 @@ class Gemini(DungonMaster):
 		self.chat.send_message(starter_prompt)
 		return
 
-	@override
 	def asscoicate_characters(self, character_summaries):
-		character_remember_prompt = open("prompt/character_remember.txt").read()
+		result = self.chat.send_message(character_summaries)
+		return result.text
 
-		content = character_remember_prompt
-		for summary in character_summaries:
-			content = content + summary
-		self.chat.send_message(content)
-		return
-
-	@override
 	def generate_scenes(self, authorName, message):
-		chat_message = f"{authorName} say {message}"
+		chat_message = f"{authorName} say {message} \n"
 		result = self.chat.send_message(chat_message)
 		return result.text
 
-	@verride
 	def story(self):
-		pass	
-
+		content = open("prompt/story.txt").read()
+		result = self.chat.send_message(content)
+		return result
 
 
 
@@ -79,7 +70,6 @@ class LocalModel:
 			{"role": "system", "content": open("prompt/starter.txt").read()}
 		]
 	# Generate the next scene for the group
-	@override	
 	def generate_scenes(self, user:str, message: str):
 		self.messages.append({"role": "user", "content": message})
 		respond = self.llm.create_chat_completion(self.messages)["choices"][0]["message"]["content"]

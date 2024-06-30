@@ -1,0 +1,9 @@
+Here is the information about the new character that will be joining the dnd game.
+
+    Character Name: {{CHARACTER_NAME}} 
+    Discord Name: {{DISCORD_NAME}}
+    Character Backstory (Optional): {{BACKGROUND}}
+    Class: {{CLASS}}
+    Alignment (Optional): {{ALIGNMENT}}
+
+associate discord name to the character name
